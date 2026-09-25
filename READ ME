@@ -1,0 +1,28 @@
+
+GUARDIAN is a real-time safety and emergency monitoring application connected to a wearable hardware device.
+
+## Features
+
+- Real-time safety dashboard
+- Heart-rate monitoring
+- Movement monitoring
+- GPS location tracking
+- SOS emergency button
+- Emergency status screen
+- Emergency service calling
+
+
+## Technology
+
+- React Native
+- Expo
+- JavaScript
+- ESP32
+- GPS
+- Health and motion sensors
+
+## Project Status
+
+Prototype / MVP
+
+The current application demonstrates the interface and emergency workflow. Hardware integration is planned as the next stage.
