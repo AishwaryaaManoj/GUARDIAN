@@ -1,0 +1,106 @@
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { Platform } from "react-native";
+import * as Linking from "expo-linking";
+import { api, setToken } from "./api";
+
+export type AuthUser = { user_id: string; email: string; name: string; picture?: string };
+
+type AuthState = {
+  loading: boolean;
+  user: AuthUser | null;
+  signIn: (session_id: string) => Promise<void>;
+  signOut: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthState | null>(null);
+const processedSessionIds = new Set<string>();
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  const signIn = useCallback(async (session_id: string) => {
+    if (processedSessionIds.has(session_id)) return;
+    processedSessionIds.add(session_id);
+    const res = await api.exchangeSession(session_id);
+    await setToken(res.session_token);
+    setUser(res.user);
+  }, []);
+
+  const signOut = useCallback(async () => {
+    try { await api.logout(); } catch {}
+    await setToken(null);
+    setUser(null);
+  }, []);
+
+  // On mount: check for session_id in URL (web) or via Linking (mobile), else /me
+  useEffect(() => {
+    let cancelled = false;
+    let sub: any;
+
+    async function bootstrap() {
+      try {
+        // Web: parse session_id from URL
+        if (Platform.OS === "web" && typeof window !== "undefined") {
+          const hash = window.location.hash || "";
+          const search = window.location.search || "";
+          const m = (hash + search).match(/[?#&]session_id=([^&#]+)/);
+          if (m) {
+            try {
+              await signIn(decodeURIComponent(m[1]));
+              // Clean URL
+              const url = new URL(window.location.href);
+              url.hash = url.hash.replace(/[#&]?session_id=[^&#]+/, "").replace(/^#$/, "");
+              url.searchParams.delete("session_id");
+              window.history.replaceState(window.history.state, "", url.toString());
+            } catch (e) {
+              console.warn("Session exchange failed", e);
+            }
+          }
+        } else {
+          // Mobile: register URL listener + check initial URL
+          sub = Linking.addEventListener("url", async ({ url }) => {
+            const m = url.match(/[?#&]session_id=([^&#]+)/);
+            if (m) {
+              try { await signIn(decodeURIComponent(m[1])); } catch (e) { console.warn(e); }
+            }
+          });
+          const initial = await Linking.getInitialURL();
+          if (initial) {
+            const m = initial.match(/[?#&]session_id=([^&#]+)/);
+            if (m) {
+              try { await signIn(decodeURIComponent(m[1])); } catch (e) { console.warn(e); }
+            }
+          }
+        }
+
+        // Check /me for existing token
+        try {
+          const me = await api.me();
+          if (!cancelled) setUser(me);
+        } catch {
+          if (!cancelled) setUser((u) => u); // keep whatever signIn set
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    bootstrap();
+    return () => {
+      cancelled = true;
+      try { sub?.remove?.(); } catch {}
+    };
+  }, [signIn]);
+
+  return (
+    <AuthContext.Provider value={{ loading, user, signIn, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
+}
