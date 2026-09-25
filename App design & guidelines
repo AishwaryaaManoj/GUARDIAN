@@ -1,0 +1,152 @@
+{
+  "app_name": "GUARDIAN",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A calm, highly legible guardian that prioritizes immediate clarity and trust, shifting to high-contrast utility during emergencies.",
+  "color": {
+    "surface": "#FFFFFF",
+    "onSurface": "#111827",
+    "surfaceSecondary": "#F9FAFB",
+    "onSurfaceSecondary": "#374151",
+    "surfaceTertiary": "#E5E7EB",
+    "onSurfaceTertiary": "#4B5563",
+    "surfaceInverse": "#111827",
+    "onSurfaceInverse": "#F9FAFB",
+    "brand": "#1F2937",
+    "brandPrimary": "#111827",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#4B5563",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#F3F4F6",
+    "onBrandTertiary": "#111827",
+    "success": "#059669",
+    "onSuccess": "#FFFFFF",
+    "warning": "#D97706",
+    "onWarning": "#FFFFFF",
+    "error": "#DC2626",
+    "onError": "#FFFFFF",
+    "border": "#E5E7EB",
+    "borderStrong": "#D1D5DB",
+    "divider": "#F3F4F6",
+    "muted": "#6B7280"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous iOS-native vertical breathing room. Cards use md (12pt) or lg (16pt) gaps. Ensure touch targets are explicitly sized to 44pt minimum.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 1,
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use glass on the bottom tab bar.",
+      "Use glass on floating action buttons or sticky headers.",
+      "Use frosted glass overlays on top of the map background card for readability."
+    ],
+    "dont's": [
+      "Do not use glass on form inputs or dense dashboard metrics.",
+      "Do not blur the massive SOS button; it must be solid and high-contrast."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Onboarding & Login",
+      "purpose": "Establish trust with a clear Google login, followed by a permissions primer and mandatory contact addition step.",
+      "states": {
+        "loading": "Spinner centered on a clean white surface",
+        "empty": "N/A",
+        "error": "Standard alert toast"
+      },
+      "layout": "A full-bleed welcoming UI for login. The permission screens use a large icon, a clear bold title, and a simple body text explanation. The 'Add Contact' step forces a single clean form before reaching the Home screen. Ensure 'Continue' buttons are sticky at the bottom."
+    },
+    {
+      "name": "Home Dashboard",
+      "purpose": "Provide instant safety status and one-handed access to the SOS hold-to-activate button.",
+      "states": {
+        "loading": "Skeleton loaders for dashboard metrics",
+        "empty": "N/A",
+        "error": "Offline indicator or disconnected state in the dashboard card"
+      },
+      "layout": "Top section: A prominent 2x2 grid or grouped list card showing 'Current Status', 'Device Connected', 'Battery %', and 'Last Location'. Bottom half (thumb zone): A massive (e.g., 200pt) circular SOS button using the 'error' color (#DC2626). Must have text 'HOLD TO SOS'. Below it, a subtle text button to 'Start Safety Session'."
+    },
+    {
+      "name": "Emergency Active (SOS State)",
+      "purpose": "High-visibility screen confirming SOS is active, showing live tracking, and providing a cancellation flow.",
+      "states": {
+        "loading": "N/A",
+        "empty": "N/A",
+        "error": "Failed to send alert notification"
+      },
+      "layout": "Inverts the theme visually: dark or stark red background. Massive pulsating visual confirming 'SOS ACTIVE'. Clear, bold typography confirming SMS/Calls were sent. A distinct 'Cancel False Alarm' slider or hold-button at the bottom to prevent accidental cancellation."
+    },
+    {
+      "name": "Contacts & History",
+      "purpose": "Manage emergency contacts and view past safety sessions.",
+      "states": {
+        "loading": "List skeletons",
+        "empty": "Illustration with text 'No emergency contacts added yet.' and a primary CTA.",
+        "error": "Retry loading state"
+      },
+      "layout": "Standard iOS list layout. Contacts show name, phone, and a 'Primary' badge. Add contact button sticky at the bottom or as a header action. History displayed in a clean timeline view."
+    }
+  ],
+  "images": {
+    "dashboard_map_bg": {
+      "url": "https://images.pexels.com/photos/5921677/pexels-photo-5921677.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Abstract map background for location tracking"
+    },
+    "safepod_device": {
+      "url": "https://images.pexels.com/photos/10958687/pexels-photo-10958687.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Matte black wearable SafePod tracking device"
+    },
+    "empty_contacts_illustration": {
+      "url": "https://images.pexels.com/photos/13934813/pexels-photo-13934813.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Minimalist white abstract curves representing an empty state"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the '1 iOS-Native Clean' personality. The app should feel reliable, professional, and OS-native, not like a generic startup template.",
+    "BANNED COLORS: Do not use any shades of blue, indigo, purple, or magenta. Use the provided Warm Charcoal (#1F2937) for trust and Brand Primary.",
+    "SOS Action: The SOS button must be enormous and positioned in the lower thumb zone. Implement a 'hold-to-activate' gesture (using react-native-gesture-handler) to prevent accidental triggers.",
+    "Emergency Mode: The active SOS screen should use the 'error' red prominently. The cancellation flow must require intentional friction (like a slider or long press).",
+    "Permissions: Include dedicated screens or modals to explain *why* location and SMS/call permissions are needed before prompting the OS dialog.",
+    "Location Tracking: When a 'Safety Session' is active, location should be visually updating on the dashboard.",
+    "Use Phosphor icons consistently. Ensure minimum tap targets of 44x44pt on all interactive elements.",
+    "Implement haptics on the SOS hold gesture (e.g., increasing intensity as the hold duration progresses) to provide non-visual feedback during panic situations."
+  ]
+}
